@@ -1,12 +1,12 @@
 import React from 'react';
-import { Modal } from 'antd';
+import { Modal, Skeleton } from 'antd';
 import PropTypes from 'prop-types';
 
-import { Skeleton } from 'uiComponents';
 import DeploymentTestResultModalContent from './DeploymentTestResultModalContent';
 
 const DeploymentTestResultModal = ({
   testResult,
+  testStatus,
   isTestingFlow,
   isShowingModal,
   handleTryAgain,
@@ -22,10 +22,16 @@ const DeploymentTestResultModal = ({
       title={<strong>Visualizar Resultados do Teste do Fluxo</strong>}
     >
       {isTestingFlow ? (
-        <Skeleton paragraphConfig={{ rows: 10, width: '100%' }} />
+        <Skeleton
+          size='large'
+          title={false}
+          active={true}
+          paragraph={{ rows: 10, width: '100%' }}
+        />
       ) : (
         <DeploymentTestResultModalContent
           testResult={testResult}
+          testStatus={testStatus}
           handleShowLogs={handleShowLogs}
           handleTryAgain={handleTryAgain}
         />
@@ -36,11 +42,17 @@ const DeploymentTestResultModal = ({
 
 DeploymentTestResultModal.propTypes = {
   testResult: PropTypes.object,
+  testStatus: PropTypes.string,
   isTestingFlow: PropTypes.bool.isRequired,
   isShowingModal: PropTypes.bool.isRequired,
   handleTryAgain: PropTypes.func.isRequired,
   handleShowLogs: PropTypes.func.isRequired,
   handleHideModal: PropTypes.func.isRequired,
+};
+
+DeploymentTestResultModal.defaultProps = {
+  testResult: null,
+  testStatus: '',
 };
 
 export default DeploymentTestResultModal;

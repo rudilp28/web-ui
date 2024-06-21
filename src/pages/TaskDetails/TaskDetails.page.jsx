@@ -103,7 +103,7 @@ const TaskDetails = () => {
 
   const handleEditTaskName = (taskName) => {
     if (!taskData) return;
-    const taskWithNewName = { ...taskData, name: taskName };
+    const taskWithNewName = { name: taskName };
     dispatch(updateTask(taskId, taskWithNewName));
   };
 

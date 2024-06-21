@@ -71,12 +71,8 @@ const NewTask = () => {
 
   const handleCreateTaskCopy = (task) => {
     const taskCopy = {
-      ...task,
-      name: `${task.name} Cópia`,
       copyFrom: task.uuid,
     };
-
-    delete taskCopy.uuid;
 
     dispatch(
       createTask(taskCopy, (newTask) => {

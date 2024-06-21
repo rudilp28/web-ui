@@ -1,9 +1,8 @@
 import React from 'react';
-import { Button } from 'antd';
+
+import { Button, Popconfirm } from 'antd';
 
 import PropTypes from 'prop-types';
-
-import { Popconfirm } from 'uiComponents';
 
 const DeleteButton = ({ popconfirmText, handleDelete }) => {
   return (
@@ -20,7 +19,7 @@ const DeleteButton = ({ popconfirmText, handleDelete }) => {
 
 DeleteButton.propTypes = {
   popconfirmText: PropTypes.string.isRequired,
-  handleDelete: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func,
 };
 
 export default DeleteButton;

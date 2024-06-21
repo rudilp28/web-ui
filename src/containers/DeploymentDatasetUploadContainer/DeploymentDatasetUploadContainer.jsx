@@ -81,18 +81,26 @@ const DeploymentDatasetUploadContainer = () => {
 
   // rendering component
   return (
-    <UploadInputBlock
-      actionUrl={actionUrl}
-      buttonText={buttonText}
-      datasets={[]}
-      datasetsLoading={datasetsLoading}
-      handleUploadCancel={containerHandleUploadCancel}
-      customRequest={customUploadHandler}
-      tip={tip}
-      title={title}
-      defaultFileList={defaultFileList}
-      deployment={true}
-    />
+    <>
+      <UploadInputBlock
+        actionUrl={actionUrl}
+        buttonText={buttonText}
+        datasets={[]}
+        datasetsLoading={datasetsLoading}
+        handleUploadCancel={containerHandleUploadCancel}
+        customRequest={customUploadHandler}
+        tip={tip}
+        title={title}
+        defaultFileList={defaultFileList}
+        deployment={true}
+      />
+
+      <p style={{ padding: '16px' }}>
+        <span>OBS: O limite máximo de linhas para arquivos CSV é de </span>
+        <strong>1000 linhas</strong>
+        <span>.</span>
+      </p>
+    </>
   );
 };
 

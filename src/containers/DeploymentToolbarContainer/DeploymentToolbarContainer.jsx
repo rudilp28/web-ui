@@ -1,48 +1,28 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Button, Divider, message } from 'antd';
+import { Divider } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
-import { PlayCircleFilled, StopOutlined } from '@ant-design/icons';
 
-import ToolbarConfig from 'components/ToolbarConfig';
-import { RunDeploymentButton } from 'components/Buttons';
-import { PromoteDeploymentModal } from 'components/Modals';
-import SaveTemplateContainer from 'containers/SaveTemplateContainer';
-
-import { useIsLoading, useToggleState } from 'hooks';
-import { PROJECTS_TYPES } from 'store/projects';
 import {
   DEPLOYMENTS_RUNS_TYPES,
   createDeploymentRunRequest,
 } from 'store/deployments/deploymentRuns';
 import {
-  fetchDeploymentOperatorsRequest,
   clearAllDeploymentOperators,
+  fetchDeploymentOperatorsRequest,
 } from 'store/operators';
-import {
-  createPredictionWithDataset,
-  getStatus as getPredictionStatus,
-  interruptPrediction,
-  PREDICTION_TYPES,
-} from 'store/prediction';
+import { useIsLoading } from 'hooks';
+import { PROJECTS_TYPES } from 'store/projects';
+import { TestDeploymentContainer } from 'containers';
+import ToolbarConfig from 'components/ToolbarConfig';
+import { RunDeploymentButton } from 'components/Buttons';
+import { PromoteDeploymentModal } from 'components/Modals';
+import SaveTemplateContainer from 'containers/SaveTemplateContainer';
 
 import './DeploymentToolbarContainer.less';
-import { DeploymentTestResultModalContainer } from 'containers';
 
 const operatorsSelector = ({ operatorsReducer }) => {
   return operatorsReducer;
-};
-
-const datasetOperatorUploadedFileNameSelector = ({ operatorsReducer }) => {
-  const datasetOperator = operatorsReducer.find((operator) => {
-    return operator.tags.includes('DATASETS');
-  });
-
-  const datasetParameter = datasetOperator?.parameters?.find((parameter) => {
-    return parameter.name === 'dataset';
-  });
-
-  return datasetParameter?.value || '';
 };
 
 const DeploymentToolbarContainer = () => {
@@ -51,34 +31,9 @@ const DeploymentToolbarContainer = () => {
   const history = useHistory();
 
   const [isShowingPromoteModal, setIsShowingPromoteModal] = useState(false);
-  const [isShowingDeploymentTestModal, handleToggleDeploymentTestModal] =
-    useToggleState(false);
-  const [hasShownResultsAlready, handleToggleHasShownResultsAlready] =
-    useToggleState(false);
-
-  // If prediction results are ready, show the test result modal.
-  // We have to do this because the user may have closed the modal, and there's no other way to reopen it.
-  const predictionStatus = useSelector(getPredictionStatus);
-  if (
-    ['done', 'failed'].includes(predictionStatus) &&
-    !isShowingDeploymentTestModal &&
-    !hasShownResultsAlready
-  ) {
-    handleToggleDeploymentTestModal();
-    handleToggleHasShownResultsAlready();
-  }
 
   const operators = useSelector(operatorsSelector);
-  const datasetOperatorUploadedFileName = useSelector(
-    datasetOperatorUploadedFileNameSelector
-  );
-
-  const isTestingFlow = useIsLoading(
-    PREDICTION_TYPES.CREATE_PREDICTION_WITH_DATASET_REQUEST
-  );
-
   const isLoading = useIsLoading(PROJECTS_TYPES.FETCH_PROJECT_REQUEST);
-
   const confirmButtonIsLoading = useIsLoading(
     DEPLOYMENTS_RUNS_TYPES.CREATE_DEPLOYMENT_RUN_REQUEST
   );
@@ -86,12 +41,6 @@ const DeploymentToolbarContainer = () => {
   const isEmpty = useMemo(() => {
     return operators.length <= 0;
   }, [operators]);
-
-  const testDeploymentFlowClassName = useMemo(() => {
-    return datasetOperatorUploadedFileName
-      ? 'deployment-toolbar-container-test-button'
-      : '';
-  }, [datasetOperatorUploadedFileName]);
 
   const handleFetchOperators = useCallback(() => {
     dispatch(fetchDeploymentOperatorsRequest(projectId, deploymentId));
@@ -119,25 +68,6 @@ const DeploymentToolbarContainer = () => {
     setIsShowingPromoteModal(true);
   };
 
-  const handleCreatePrediction = () => {
-    if (datasetOperatorUploadedFileName) {
-      handleToggleDeploymentTestModal();
-      handleToggleHasShownResultsAlready();
-
-      dispatch(
-        createPredictionWithDataset(
-          projectId,
-          deploymentId,
-          datasetOperatorUploadedFileName
-        )
-      );
-    }
-  };
-
-  const handleInterruptFlowTesting = () => {
-    dispatch(interruptPrediction());
-  };
-
   useEffect(() => {
     if (deploymentId) {
       handleFetchOperators(projectId, deploymentId);
@@ -145,17 +75,6 @@ const DeploymentToolbarContainer = () => {
       handleClearOperators();
     }
   }, [projectId, deploymentId, handleFetchOperators, handleClearOperators]);
-
-  useEffect(() => {
-    if (isTestingFlow) {
-      message.loading({
-        key: 'isTestingFlow',
-        content: 'Testando o Fluxo',
-      });
-    } else {
-      message.destroy('isTestingFlow');
-    }
-  }, [isTestingFlow]);
 
   return (
     <div className='deployment-toolbar-container'>
@@ -170,39 +89,12 @@ const DeploymentToolbarContainer = () => {
         urlPrefix={`${window.location.origin.toString()}/seldon/anonymous/`}
       />
 
-      <DeploymentTestResultModalContainer
-        projectId={projectId}
-        deploymentId={deploymentId}
-        isTestingFlow={isTestingFlow}
-        isShowingModal={isShowingDeploymentTestModal}
-        handleHideModal={handleToggleDeploymentTestModal}
-      />
-
       <div className='deployment-toolbar-container-controls'>
         <ToolbarConfig deployment />
       </div>
 
       <div className='deployment-toolbar-container-buttons'>
-        {isTestingFlow ? (
-          <Button
-            onClick={handleInterruptFlowTesting}
-            icon={<StopOutlined />}
-            type='primary-inverse'
-            shape='round'
-          >
-            Interromper
-          </Button>
-        ) : (
-          <Button
-            disabled={!datasetOperatorUploadedFileName}
-            className={testDeploymentFlowClassName}
-            onClick={handleCreatePrediction}
-            icon={<PlayCircleFilled />}
-            shape='round'
-          >
-            Testar Fluxo
-          </Button>
-        )}
+        <TestDeploymentContainer />
 
         <Divider
           className='deployment-toolbar-container-divider'

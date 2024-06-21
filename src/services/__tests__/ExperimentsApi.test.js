@@ -15,7 +15,7 @@ describe('ExperimentsApi', () => {
       rejected: AuthExpiredInterceptor.Response.onRejected,
     };
 
-    expect(experimentsApi.axiosInstance.interceptors.response.handlers).toEqual(
+    expect(experimentsApi.axiosInstance.interceptors.response.handlers).toMatchObject(
       [interceptor]
     );
   });

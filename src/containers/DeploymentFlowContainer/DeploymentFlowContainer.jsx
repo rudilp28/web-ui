@@ -3,10 +3,11 @@ import { useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useIsLoading } from 'hooks';
+import { getTasks } from 'store/tasks';
 import { OPERATORS_TYPES } from 'store/operators';
+import { DEPLOYMENTS_TYPES } from 'store/deployments';
 import DeploymentFlow from 'components/DeploymentFlow';
 import { hideLogsPanel, showLogsPanel } from 'store/ui/actions';
-import { DEPLOYMENTS_TYPES } from 'store/deployments';
 import {
   selectOperator,
   deselectOperator,
@@ -33,6 +34,7 @@ const DeploymentFlowContainer = () => {
   const { projectId, deploymentId } = useParams();
   const dispatch = useDispatch();
 
+  const tasks = useSelector(getTasks);
   const operators = useSelector(operatorsSelector);
   const numberOfLogs = useSelector(numberOfLogsSelector);
   const selectedOperatorId = useSelector(selectedOperatorIdSelector);
@@ -69,6 +71,7 @@ const DeploymentFlowContainer = () => {
 
   return (
     <DeploymentFlow
+      tasks={tasks}
       loading={loading}
       operators={operators}
       numberOfLogs={numberOfLogs}

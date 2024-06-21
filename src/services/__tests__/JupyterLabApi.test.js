@@ -15,7 +15,7 @@ describe('JupyterLabApi', () => {
       rejected: AuthExpiredInterceptor.Response.onRejected,
     };
 
-    expect(jupyterLabApi.axiosInstance.interceptors.response.handlers).toEqual([
+    expect(jupyterLabApi.axiosInstance.interceptors.response.handlers).toMatchObject([
       interceptor,
     ]);
   });

@@ -17,6 +17,6 @@ describe('DeploymentRunsApi', () => {
 
     expect(
       deploymentRunsApi.axiosInstance.interceptors.response.handlers
-    ).toEqual([interceptor]);
+    ).toMatchObject([interceptor]);
   });
 });

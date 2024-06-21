@@ -1,9 +1,4 @@
-.resultsDrawer {
-  .tab-content {
-    overflow: auto;
-    margin-bottom: 10px;
-  }
-
+.results-drawer {
   .ant-tabs-tab {
     padding-left: 20px;
     padding-right: 20px;
@@ -11,7 +6,47 @@
     margin-right: 0;
   }
 
-  .download-result-button {
+  .results-drawer-add-card {
+    border: 2px dashed #d9d9d9;
+    text-align: center;
+    margin: 0;
+  }
+
+  .results-drawer-react-grid {
+    img {
+      pointer-events: all;
+    }
+  }
+
+  .results-drawer-result-scroll {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 16px;
+  }
+
+  .results-drawer-result-table {
+    flex: 1;
+    overflow: auto;
+    height: 100%;
+    padding: 16px;
+  }
+
+  .results-drawer-placeholder {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .results-drawer-plot-image {
+    margin: auto;
+  }
+
+  .results-drawer-download-dataset {
     margin-bottom: 8px;
   }
 }

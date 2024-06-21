@@ -1,7 +1,8 @@
 import React from 'react';
+import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 
-import Tooltip from './Tooltip';
+import StatusTooltip from './Tooltip';
 import DropdownMenu from './DropdownMenu';
 
 import './style.less';
@@ -19,12 +20,16 @@ const DeploymentFlowBox = (props) => {
     leftFlowHandle,
     rightFlowHandle,
     onEdit,
+    operatorOriginalTask,
   } = props;
 
   const settedUpClass = settedUp ? 'setted-up' : '';
   const statusClass = status?.toLowerCase();
   const selectedClass = selected ? 'selected' : '';
   const mainClassName = `card ${settedUpClass} ${statusClass} ${selectedClass}`;
+
+  const canShowTheOperatorOriginalName =
+    !!operatorOriginalTask?.name && operatorOriginalTask.name !== title;
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -47,7 +52,17 @@ const DeploymentFlowBox = (props) => {
         >
           <div className='siders'>
             {leftFlowHandle}
-            <div className='icon'>{icon}</div>
+
+            <Tooltip
+              placement='left'
+              title={
+                canShowTheOperatorOriginalName
+                  ? `Nome Original: ${operatorOriginalTask.name}`
+                  : ''
+              }
+            >
+              <div className='icon'>{icon}</div>
+            </Tooltip>
           </div>
 
           <div className='middle'>
@@ -55,7 +70,7 @@ const DeploymentFlowBox = (props) => {
           </div>
 
           <div className='siders'>
-            <Tooltip status={status} />
+            <StatusTooltip status={status} />
             {rightFlowHandle}
           </div>
         </div>
@@ -86,6 +101,7 @@ DeploymentFlowBox.propTypes = {
     'Setted up',
   ]),
   title: PropTypes.string.isRequired,
+  operatorOriginalTask: PropTypes.object,
 };
 
 DeploymentFlowBox.defaultProps = {
@@ -94,6 +110,7 @@ DeploymentFlowBox.defaultProps = {
   selected: false,
   leftFlowHandle: undefined,
   rightFlowHandle: undefined,
+  operatorOriginalTask: null,
 };
 
 export default DeploymentFlowBox;

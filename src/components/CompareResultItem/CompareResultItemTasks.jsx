@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
-import { Select } from 'antd';
+import { Select, Skeleton } from 'antd';
 import PropTypes from 'prop-types';
-
-import { Skeleton } from 'uiComponents';
 
 import './CompareResultItem.less';
 
@@ -46,7 +44,14 @@ const CompareResultItemTasks = ({
   };
 
   if (!compareResult.runId || !selectedExperiment) {
-    return <Skeleton />;
+    return (
+      <Skeleton
+        size='large'
+        title={false}
+        active={true}
+        paragraph={{ rows: 1, width: '100%' }}
+      />
+    );
   }
 
   return (

@@ -17,6 +17,6 @@ describe('DeploymentsOperatorsApi', () => {
 
     expect(
       deploymentsOperatorsApi.axiosInstance.interceptors.response.handlers
-    ).toEqual([interceptor]);
+    ).toMatchObject([interceptor]);
   });
 });

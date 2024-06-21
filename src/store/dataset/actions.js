@@ -412,6 +412,7 @@ export const startDatasetUpload =
       if (!isCancel(error)) {
         // dispatch fail action
         dispatch(datasetUploadFail());
+        dispatch(cancelDatasetUpload());
       }
     } finally {
       dispatch(removeLoading(actionTypes.CREATE_DATASET_REQUEST));

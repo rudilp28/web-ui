@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { ConfigProvider, Drawer as AntDrawer, Tabs } from 'antd';
+import { ConfigProvider, Drawer as AntDrawer, Tabs, Skeleton } from 'antd';
 
-import { Skeleton } from 'uiComponents';
 import { CommonTable } from 'components';
 
 const LogsDrawer = ({ handleClose, isLoading, isVisible, logs, title }) => {
@@ -62,8 +61,18 @@ const LogsDrawer = ({ handleClose, isLoading, isVisible, logs, title }) => {
     >
       {isLoading ? (
         <>
-          <Skeleton paragraphConfig={{ rows: 1, width: '30%' }} />
-          <Skeleton paragraphConfig={{ rows: 1, width: '30%' }} />
+          <Skeleton
+            size='large'
+            title={false}
+            active={true}
+            paragraph={{ rows: 1, width: '30%' }}
+          />
+          <Skeleton
+            size='large'
+            title={false}
+            active={true}
+            paragraph={{ rows: 1, width: '30%' }}
+          />
 
           <CommonTable
             size={'small'}

@@ -9,7 +9,7 @@ import {
   DataViewModalContainer,
   ExperimentsHeaderContainer,
   OperatorResizableSectionContainer,
-  OperatorResultsModalContainer,
+  ExperimentResultsDrawerContainer,
   PrepareDeploymentsModalContainer,
 } from 'containers';
 
@@ -41,7 +41,7 @@ const Experiments = () => {
       <PrepareDeploymentsModalContainer />
       <CompareResultsModalContainer />
       <DataViewModalContainer />
-      <OperatorResultsModalContainer />
+      <ExperimentResultsDrawerContainer />
       <ExperimentsHeaderContainer />
 
       <Layout style={{ overflow: 'hidden' }}>

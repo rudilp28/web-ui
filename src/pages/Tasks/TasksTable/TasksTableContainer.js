@@ -1,13 +1,21 @@
 import React, { useLayoutEffect } from 'react';
+import { ConfigProvider } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useIsLoading } from 'hooks';
 import { TASK_CATEGORIES } from 'configs';
 import { TasksEmptyPlaceholder } from 'components/EmptyPlaceholders';
-import { TASKS_TYPES, deleteTask, fetchTasks, createTask } from 'store/tasks';
+import {
+  TASKS_TYPES,
+  deleteTask,
+  createTask,
+  getPageSize,
+  fetchPaginatedTasks,
+} from 'store/tasks';
 
 import TasksTable from './index';
 import { useHistory } from 'react-router';
+import TasksTablePaginationContainer from '../TasksTablePagination/TasksTablePaginationContainer';
 
 const tasksSelector = ({ tasksReducer }) => {
   const tasks = tasksReducer.tasks || [];
@@ -21,9 +29,10 @@ const TasksTableContainer = () => {
   const history = useHistory();
 
   const tasks = useSelector(tasksSelector);
+  const pageSize = useSelector(getPageSize);
 
   const isLoadingOrDeleting = useIsLoading(
-    TASKS_TYPES.FETCH_TASKS_REQUEST,
+    TASKS_TYPES.FETCH_TASKS_PAGE_REQUEST,
     TASKS_TYPES.DELETE_TASK_REQUEST
   );
 
@@ -39,12 +48,8 @@ const TasksTableContainer = () => {
 
   const handleCopyTask = (task) => {
     const taskCopy = {
-      ...task,
       copyFrom: task.uuid,
     };
-
-    delete taskCopy.uuid;
-    delete taskCopy.name;
 
     dispatch(
       createTask(taskCopy, (newTask) => {
@@ -57,23 +62,32 @@ const TasksTableContainer = () => {
     history.push(`/tarefas/${task.uuid}`);
   };
 
+  const handleSearchTasks = (search) => {
+    dispatch(fetchPaginatedTasks(1, pageSize, search));
+  };
+
   useLayoutEffect(() => {
-    dispatch(fetchTasks());
+    dispatch(fetchPaginatedTasks(1, 10));
   }, [dispatch]);
 
-  return isLoadingOrDeleting || tasks.length > 0 ? (
+  return (
     <div className='tasksContainer'>
-      <TasksTable
-        tasks={tasks}
-        isLoading={isLoadingOrDeleting}
-        handleCopyTask={handleCopyTask}
-        handleDeleteTask={handleDeleteTask}
-        handleSeeTaskCode={handleSeeTaskCode}
-        handleOpenTaskDetails={handleOpenTaskDetails}
-      />
+      <ConfigProvider renderEmpty={() => <TasksEmptyPlaceholder />}>
+        <TasksTable
+          tasks={tasks}
+          isLoading={isLoadingOrDeleting}
+          handleCopyTask={handleCopyTask}
+          handleDeleteTask={handleDeleteTask}
+          handleSeeTaskCode={handleSeeTaskCode}
+          handleSearchTasks={handleSearchTasks}
+          handleOpenTaskDetails={handleOpenTaskDetails}
+        />
+      </ConfigProvider>
+
+      <br />
+
+      <TasksTablePaginationContainer />
     </div>
-  ) : (
-    <TasksEmptyPlaceholder />
   );
 };
 

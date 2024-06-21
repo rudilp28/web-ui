@@ -86,7 +86,7 @@ const ProjectsTable = ({
       },
       onFilterDropdownVisibleChange: (visible) => {
         if (visible) {
-          setTimeout(() => searchInputRef.current.select());
+          setTimeout(() => searchInputRef.current?.focus(), 100);
         }
       },
       filterIcon(filtered) {

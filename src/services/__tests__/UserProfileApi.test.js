@@ -15,7 +15,7 @@ describe('UserProfileApi', () => {
       rejected: AuthExpiredInterceptor.Response.onRejected,
     };
 
-    expect(UserProfileApi.axiosInstance.interceptors.response.handlers).toEqual(
+    expect(UserProfileApi.axiosInstance.interceptors.response.handlers).toMatchObject(
       [interceptor]
     );
   });

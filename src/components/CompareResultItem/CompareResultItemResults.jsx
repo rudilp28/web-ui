@@ -4,7 +4,8 @@ import { Image } from 'antd';
 
 import utils from 'utils';
 import { ResultGraphLoading, ResultTableLoading } from 'assets';
-import ResultsDrawer from 'pages/Experiments/Experiment/Drawer/ResultsDrawer';
+
+import ResultData from './ResultData';
 
 import './CompareResultItem.less';
 
@@ -91,7 +92,7 @@ const CompareResultItemResults = ({
   }
 
   return (
-    <ResultsDrawer
+    <ResultData
       loading={false}
       parameters={resultsParameters}
       dataset={compareResult.dataset}

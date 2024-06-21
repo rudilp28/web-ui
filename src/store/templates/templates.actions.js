@@ -47,21 +47,33 @@ const templatesActionSuccess =
 /**
  * Templates fail default action
  *
- * @param {object} failObject Success action default object
+ * @param {object} failObject Error action default object
  * @param {string} failObject.requestActionType Action type request, used in loading
  * @param {string} failObject.failActionType Action type fail
- * @param {string=} failObject.message Success message
+ * @param {string=} failObject.message Error message
+ * @param {object} failObject.response Error message
  * @param {Function} failObject.callback Fail function callback
  * @returns {Function} Thunk action
  */
 const templatesActionFail =
-  ({ requestActionType, failActionType, message = undefined, callback }) =>
+  ({
+    requestActionType,
+    failActionType,
+    message = undefined,
+    response,
+    callback,
+  }) =>
   (dispatch) => {
-    dispatch({
-      type: failActionType,
-    });
+    dispatch({ type: failActionType });
 
-    if (message) dispatch(showError(message));
+    const customMessages = {
+      TemplateNameExists: 'Um template com o mesmo nome já existe!',
+    };
+
+    const customMessage = customMessages[response?.code] || response?.message;
+    const errorMessage = customMessage || message;
+
+    if (errorMessage) dispatch(showError(errorMessage));
     if (callback) callback();
 
     dispatch(removeLoading(requestActionType));
@@ -96,12 +108,11 @@ export const fetchTemplatesRequest = () => async (dispatch) => {
 
     dispatch(templatesActionSuccess(successObject));
   } catch (error) {
-    const errorMessage = error.message;
-
     const errorObject = {
       requestActionType,
       failActionType: TEMPLATES_TYPES.FETCH_TEMPLATES_FAIL,
-      message: errorMessage,
+      message: error.message,
+      response: error.response?.data,
     };
 
     dispatch(templatesActionFail(errorObject));
@@ -150,12 +161,11 @@ export const createTemplateRequest =
 
       dispatch(templatesActionSuccess(successObject));
     } catch (error) {
-      const errorMessage = error.message;
-
       const errorObject = {
         requestActionType,
         failActionType: TEMPLATES_TYPES.FETCH_TEMPLATES_FAIL,
-        message: errorMessage,
+        message: error.message,
+        response: error.response?.data,
       };
 
       dispatch(templatesActionFail(errorObject));
@@ -235,12 +245,11 @@ export const deleteTemplateRequest =
 
       dispatch(templatesActionSuccess(successObject));
     } catch (error) {
-      const errorMessage = error.message;
-
       const errorObject = {
         failActionType: TEMPLATES_TYPES.DELETE_TEMPLATE_FAIL,
         requestActionType,
-        message: errorMessage,
+        message: error.message,
+        response: error.response?.data,
       };
 
       dispatch(templatesActionFail(errorObject));

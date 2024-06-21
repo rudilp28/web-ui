@@ -8,6 +8,7 @@ import {
   getOperatorResultDataset,
   renameExperimentOperator,
 } from 'store/operator';
+import { getTasks } from 'store/tasks';
 import { OPERATOR_STATUS } from 'configs';
 import { useBooleanState, useIsLoading } from 'hooks';
 import { ResultsButtonBar } from 'components/Buttons';
@@ -51,10 +52,16 @@ const OperatorResizableSectionContainer = () => {
 
   const isDatasetOperator = useSelector(isDatasetOperatorSelector);
   const operator = useSelector(operatorSelector);
+  const tasks = useSelector(getTasks);
 
   const isRenamingOperator = useIsLoading(
     OPERATOR_TYPES.RENAME_EXPERIMENT_OPERATOR_REQUEST
   );
+
+  const operatorOriginalTask = useMemo(() => {
+    if (!operator || !tasks?.length) return null;
+    return tasks.find(({ uuid }) => uuid === operator.taskId);
+  }, [operator, tasks]);
 
   const isResultsButtonBarDisabled = useMemo(() => {
     const isOperatorPending = operator.status === OPERATOR_STATUS.PENDING;
@@ -122,11 +129,11 @@ const OperatorResizableSectionContainer = () => {
 
   return (
     <PropertiesPanel
-      tip={operator.description}
       title={operator.name}
       isShowingEditIcon={!!operator?.name}
-      isEditingTitle={isEditingOperatorName}
       isSavingNewTitle={isRenamingOperator}
+      isEditingTitle={isEditingOperatorName}
+      operatorOriginalTask={operatorOriginalTask}
       handleSaveModifiedTitle={handleSaveNewOperatorName}
       handleStartEditing={handleStartEditingOperatorName}
       handleCancelEditing={handleCancelEditingOperatorName}

@@ -76,6 +76,7 @@ const TaskBox = ({
   experimentIsRunning,
   interruptIsRunning,
   dependenciesGraph,
+  operatorOriginalTask,
 }) => {
   const { projectId, experimentId } = useParams();
   const dispatch = useDispatch();
@@ -178,7 +179,7 @@ const TaskBox = ({
     return handleDetectCycle(futureGraph) && isNotIncluded;
   };
 
-  const renderTooltip = () => {
+  const renderRightIconWithTooltip = () => {
     if (!status || isLoading) return null;
     const toolTipConfig = getToolTipConfig(status, interruptIsRunning);
 
@@ -211,7 +212,17 @@ const TaskBox = ({
             className='arrow-handler left'
             isValidConnection={() => false}
           />
-          <div style={{ fontSize: '18px' }}>{icon}</div>
+
+          <Tooltip
+            placement='left'
+            title={
+              !!operatorOriginalTask?.name && operatorOriginalTask.name !== name
+                ? `Nome Original: ${operatorOriginalTask?.name}`
+                : ''
+            }
+          >
+            <div style={{ fontSize: '18px' }}>{icon}</div>
+          </Tooltip>
         </div>
 
         <div className='middle'>
@@ -219,7 +230,7 @@ const TaskBox = ({
         </div>
 
         <div className='siders'>
-          {renderTooltip()}
+          {renderRightIconWithTooltip()}
 
           <Handle
             type='source'
@@ -239,12 +250,17 @@ TaskBox.propTypes = {
   status: PropTypes.string.isRequired,
   settedUp: PropTypes.bool.isRequired,
   selected: PropTypes.bool.isRequired,
+  operatorOriginalTask: PropTypes.object,
   handleClick: PropTypes.func.isRequired,
   onConnectingClass: PropTypes.string,
   operator: PropTypes.object,
   experimentIsRunning: PropTypes.bool,
   interruptIsRunning: PropTypes.bool,
   dependenciesGraph: PropTypes.object,
+};
+
+TaskBox.defaultProps = {
+  operatorOriginalTask: null,
 };
 
 export default memo(TaskBox);

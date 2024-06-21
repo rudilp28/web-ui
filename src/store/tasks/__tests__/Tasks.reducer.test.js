@@ -44,18 +44,21 @@ describe('Tasks Action Types', () => {
     expect(newState.tasks).toEqual([{ uuid: '2' }]);
   });
 
-  it('should set tasks array and page control data in the state', () => {
+  it('should set pagination and search data in the state', () => {
     const action = {
       type: TASKS_TYPES.FETCH_TASKS_PAGE_SUCCESS,
       tasks: [{ uuid: '1' }],
       totalTasks: 1,
       pageSize: 1,
+      page: 1,
+      name: 'Task',
     };
 
     const newState = tasksReducer(initialState, action);
 
     expect(newState).toEqual({
       ...initialState,
+      name: 'Task',
       tasks: action.tasks,
       totalTasks: action.totalTasks,
       pageSize: action.pageSize,

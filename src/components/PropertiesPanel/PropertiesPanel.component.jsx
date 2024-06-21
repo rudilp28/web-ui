@@ -6,23 +6,23 @@ import { ResizableSection } from 'components';
 import './PropertiesPanel.component.less';
 
 const PropertiesPanel = ({
-  tip,
   title,
   children,
   isEditingTitle,
   isSavingNewTitle,
   isShowingEditIcon,
+  operatorOriginalTask,
   handleStartEditing,
   handleCancelEditing,
   handleSaveModifiedTitle,
 }) => {
   return (
     <ResizableSection
-      tip={tip}
       title={title || 'Propriedades'}
       isEditingTitle={isEditingTitle}
       isSavingNewTitle={isSavingNewTitle}
       isShowingEditIcon={isShowingEditIcon}
+      operatorOriginalTask={operatorOriginalTask}
       handleStartEditing={handleStartEditing}
       handleCancelEditing={handleCancelEditing}
       handleSaveModifiedTitle={handleSaveModifiedTitle}
@@ -38,24 +38,24 @@ const PropertiesPanel = ({
 };
 
 PropertiesPanel.propTypes = {
-  tip: PropTypes.string,
   title: PropTypes.string,
   children: PropTypes.node,
   isEditingTitle: PropTypes.bool,
   isSavingNewTitle: PropTypes.bool,
   isShowingEditIcon: PropTypes.bool,
+  operatorOriginalTask: PropTypes.object,
   handleStartEditing: PropTypes.func,
   handleCancelEditing: PropTypes.func,
   handleSaveModifiedTitle: PropTypes.func,
 };
 
 PropertiesPanel.defaultProps = {
-  tip: undefined,
   title: undefined,
   children: undefined,
   isEditingTitle: false,
   isSavingNewTitle: false,
   isShowingEditIcon: true,
+  operatorOriginalTask: undefined,
   handleStartEditing: undefined,
   handleCancelEditing: undefined,
   handleSaveModifiedTitle: undefined,

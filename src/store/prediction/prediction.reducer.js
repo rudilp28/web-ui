@@ -1,49 +1,55 @@
 import * as PREDICTION_TYPES from './prediction.actionTypes';
 
 export const initialState = {
-  dataset: null,
-  deploymentId: null,
-  predictionId: null,
-  predictionResult: null,
-  status: null,
+  results: {},
+  running: {},
 };
 
 export const predictionReducer = (state = initialState, action = {}) => {
   const { type, payload } = action;
 
   switch (type) {
-    case PREDICTION_TYPES.CREATE_PREDICTION_WITH_DATASET_REQUEST:
     case PREDICTION_TYPES.INTERRUPT_PREDICTION: {
-      return {
-        ...state,
-        predictionId: null,
-        predictionResult: null,
-        status: null,
-      };
+      const predictionKey = `${payload.projectId}/${payload.deploymentId}`;
+      const stateClone = { ...state };
+      delete stateClone.running[predictionKey];
+      return stateClone;
+    }
+
+    case PREDICTION_TYPES.DELETE_PREDICTION_RESULT: {
+      const predictionKey = `${payload.projectId}/${payload.deploymentId}`;
+      const stateClone = { ...state };
+      delete stateClone.results[predictionKey];
+      return stateClone;
     }
 
     case PREDICTION_TYPES.CREATE_PREDICTION_WITH_DATASET_SUCCESS: {
+      const predictionKey = `${payload.projectId}/${payload.deploymentId}`;
       return {
         ...state,
-        predictionId: payload.predictionId,
-        status: payload.status,
-      };
-    }
-
-    case PREDICTION_TYPES.CREATE_PREDICTION_WITH_DATASET_FAIL: {
-      return {
-        ...state,
-        predictionId: null,
-        predictionResult: null,
-        status: 'failed',
+        running: {
+          ...state.running,
+          [predictionKey]: {
+            status: payload.status,
+            dataset: payload.dataset,
+            predictionId: payload.predictionId,
+          },
+        },
       };
     }
 
     case PREDICTION_TYPES.FETCH_PREDICTION_SUCCESS: {
+      const predictionKey = `${payload.projectId}/${payload.deploymentId}`;
       return {
         ...state,
-        predictionResult: payload.predictionResult,
-        status: payload.status,
+        results: {
+          ...state.results,
+          [predictionKey]: {
+            status: payload.status,
+            predictionId: payload.predictionId,
+            predictionData: payload.predictionData,
+          },
+        },
       };
     }
 

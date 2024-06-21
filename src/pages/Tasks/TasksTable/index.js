@@ -23,10 +23,21 @@ const TasksTable = ({
   handleCopyTask,
   handleDeleteTask,
   handleSeeTaskCode,
+  handleSearchTasks,
   handleOpenTaskDetails,
 }) => {
   const searchInputRef = useRef(null);
   const confirmPopupRef = useRef(null);
+
+  const handleSearch = (search, confirm) => {
+    confirm();
+    handleSearchTasks(search);
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    handleSearchTasks('');
+  };
 
   const columnsConfig = [
     {
@@ -47,46 +58,41 @@ const TasksTable = ({
               onChange={(e) =>
                 setSelectedKeys(e.target.value ? [e.target.value] : [])
               }
-              onPressEnter={() => confirm()}
+              onPressEnter={() => handleSearch(selectedKeys[0], confirm)}
               style={{ width: 188, marginBottom: 8, display: 'block' }}
             />
 
             <Space>
               <Button
-                type='primary'
-                onClick={() => confirm()}
-                icon={<SearchOutlined />}
                 size='small'
+                type='primary'
                 style={{ width: 90 }}
+                icon={<SearchOutlined />}
+                onClick={() => handleSearch(selectedKeys[0], confirm)}
               >
-                Search
+                Buscar
               </Button>
 
               <Button
-                onClick={() => clearFilters()}
                 size='small'
                 style={{ width: 90 }}
+                onClick={() => handleReset(clearFilters)}
               >
-                Reset
+                Resetar
               </Button>
             </Space>
           </div>
         );
       },
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInputRef.current?.focus(), 100);
+        }
+      },
       filterIcon(filtered) {
         return (
           <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
         );
-      },
-      onFilter: (value, record) => {
-        return record
-          ? record.name.toLowerCase().includes(value.toLowerCase())
-          : '';
-      },
-      onFilterDropdownVisibleChange: (visible) => {
-        if (visible) {
-          setTimeout(() => searchInputRef.current.select());
-        }
       },
       render(value, record) {
         return (
@@ -232,11 +238,6 @@ const TasksTable = ({
       className='tasksTable'
       columns={columnsConfig}
       rowKey={(record) => record.uuid}
-      pagination={{
-        defaultPageSize: 10,
-        showSizeChanger: true,
-        pageSizeOptions: ['10', '20', '30', '40', '50'],
-      }}
     />
   );
 };
@@ -247,6 +248,7 @@ TasksTable.propTypes = {
   handleCopyTask: PropTypes.func.isRequired,
   handleDeleteTask: PropTypes.func.isRequired,
   handleSeeTaskCode: PropTypes.func.isRequired,
+  handleSearchTasks: PropTypes.func.isRequired,
   handleOpenTaskDetails: PropTypes.func.isRequired,
 };
 

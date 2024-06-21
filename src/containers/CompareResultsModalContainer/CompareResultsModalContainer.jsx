@@ -2,7 +2,17 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import RGL, { WidthProvider } from 'react-grid-layout';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Card, Col, Divider, Row, Space, Tooltip } from 'antd';
+import {
+  Button,
+  Card,
+  Col,
+  Divider,
+  Row,
+  Space,
+  Tooltip,
+  Skeleton,
+  Modal,
+} from 'antd';
 import {
   PlusOutlined,
   LoadingOutlined,
@@ -20,11 +30,10 @@ import {
 } from 'store/compareResults/actions';
 import utils from 'utils';
 import { useIsLoading } from 'hooks';
-import { Modal, Skeleton } from 'uiComponents';
 import { CommonTable, CompareResultItem } from 'components';
 import COMPARE_RESULTS_TYPES from 'store/compareResults/actionTypes';
-import { changeVisibilityCompareResultsModal } from 'store/ui/actions';
 import { getExperiments } from 'store/projects/experiments/experiments.selectors';
+import { changeVisibilityCompareResultsModal } from 'store/ui/actions';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -118,11 +127,22 @@ const CompareResultsModalContainer = () => {
     return (
       <Col span={12}>
         <Card
-          title={<Skeleton paragraphConfig={{ rows: 1, width: '100%' }} />}
+          title={
+            <Skeleton
+              size='large'
+              title={false}
+              isActive={true}
+              paragraph={{ rows: 1, width: '100%' }}
+            />
+          }
           style={{ height: 450, overflowX: 'scroll' }}
         >
-          <Skeleton paragraphConfig={{ rows: 1, width: '100%' }} />
-
+          <Skeleton
+            size='large'
+            title={false}
+            active={true}
+            paragraph={{ rows: 1, width: '100%' }}
+          />
           <CommonTable
             columns={[
               { title: '' },
@@ -285,12 +305,12 @@ const CompareResultsModalContainer = () => {
         overflowX: 'scroll',
         height: '80vh',
       }}
+      centered
       footer={null}
-      handleClose={() => dispatch(changeVisibilityCompareResultsModal(false))}
-      isFullScreen={false}
-      isVisible={isVisible}
       title={title}
       width={'90%'}
+      visible={isVisible}
+      onCancel={() => dispatch(changeVisibilityCompareResultsModal(false))}
     >
       {modalBody()}
     </Modal>

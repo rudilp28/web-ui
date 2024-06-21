@@ -40,8 +40,7 @@ const MarketplaceTaskDetails = () => {
   };
 
   const handleCopyTask = () => {
-    const taskCopy = { ...taskData, copyFrom: taskData.uuid };
-    delete taskCopy.uuid;
+    const taskCopy = { copyFrom: taskData.uuid };
     dispatch(
       createTask(taskCopy, () => {
         message.success('Tarefa copiada!');

@@ -9,18 +9,18 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 
-import { PopoverTip } from 'components';
+import { TaskDataPopover } from 'components';
 
 import './ResizableSection.less';
 
 const ResizableSection = ({
-  tip,
   title,
   children,
   placeholder,
   isEditingTitle,
   isSavingNewTitle,
   isShowingEditIcon,
+  operatorOriginalTask,
   handleStartEditing,
   handleCancelEditing,
   handleSaveModifiedTitle,
@@ -48,22 +48,13 @@ const ResizableSection = ({
   };
 
   const renderResizableSectionHeader = () => {
-    if (!title && !tip) return null;
+    if (!title) return null;
 
-    const tipComponent = (
-      <>
-        {tip && (
-          <div className='resizable-section-tip'>
-            <PopoverTip
-              popoverTitle={title || ''}
-              isPopoverBelow={true}
-              popoverText={tip}
-              iconType='info'
-            />
-          </div>
-        )}
-      </>
-    );
+    const taskDataPopover = operatorOriginalTask ? (
+      <div className='resizable-section-tip'>
+        <TaskDataPopover title={title} taskData={operatorOriginalTask} />
+      </div>
+    ) : null;
 
     if (isEditingTitle) {
       return (
@@ -105,7 +96,7 @@ const ResizableSection = ({
             </Tooltip>
           </form>
 
-          {tipComponent}
+          {taskDataPopover}
         </div>
       );
     }
@@ -130,7 +121,7 @@ const ResizableSection = ({
           )}
         </div>
 
-        {tipComponent}
+        {taskDataPopover}
       </div>
     );
   };
@@ -164,26 +155,26 @@ const ResizableSection = ({
 };
 
 ResizableSection.propTypes = {
-  tip: PropTypes.string,
   title: PropTypes.string,
   children: PropTypes.node,
   placeholder: PropTypes.node,
   isEditingTitle: PropTypes.bool,
   isSavingNewTitle: PropTypes.bool,
   isShowingEditIcon: PropTypes.bool,
+  operatorOriginalTask: PropTypes.string,
   handleStartEditing: PropTypes.func,
   handleCancelEditing: PropTypes.func,
   handleSaveModifiedTitle: PropTypes.func,
 };
 
 ResizableSection.defaultProps = {
-  tip: undefined,
   title: undefined,
   children: undefined,
   placeholder: undefined,
   isEditingTitle: false,
   isSavingNewTitle: false,
   isShowingEditIcon: true,
+  operatorOriginalTask: undefined,
   handleStartEditing: undefined,
   handleCancelEditing: undefined,
   handleSaveModifiedTitle: undefined,

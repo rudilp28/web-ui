@@ -7,10 +7,11 @@ import {
   OPERATOR_TYPES,
   deselectOperator,
   saveOperatorPosition,
+  removeOperatorRequest,
   saveOperatorDependencies,
   selectOperatorAndGetData,
-  removeOperatorRequest,
 } from 'store/operator';
+import { getTasks } from 'store/tasks';
 import { OPERATORS_TYPES } from 'store/operators';
 import { useDeepEqualSelector, useIsLoading } from 'hooks';
 import { hideLogsPanel, showLogsPanel } from 'store/ui/actions';
@@ -42,8 +43,9 @@ const ExperimentFlowContainer = () => {
   const dispatch = useDispatch();
   const { projectId, experimentId } = useParams();
 
-  const operators = useDeepEqualSelector(operatorsSelector);
+  const tasks = useDeepEqualSelector(getTasks);
   const operator = useDeepEqualSelector(operatorSelector);
+  const operators = useDeepEqualSelector(operatorsSelector);
   const arrowConfigs = useDeepEqualSelector(arrowConfigsSelector);
   const numberOfLogs = useDeepEqualSelector(numberOfLogsSelector);
   const isShowingLogsPanel = useDeepEqualSelector(isShowingLogsPanelSelector);
@@ -102,7 +104,8 @@ const ExperimentFlowContainer = () => {
 
   return (
     <ExperimentFlow
-      tasks={operators}
+      tasks={tasks}
+      operators={operators}
       flowLoading={flowLoading}
       numberOfLogs={numberOfLogs}
       arrowConfigs={arrowConfigs}

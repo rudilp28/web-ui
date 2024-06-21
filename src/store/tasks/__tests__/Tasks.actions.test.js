@@ -188,10 +188,21 @@ describe('Tasks Action', () => {
   });
 
   it('should create the fetch paginated task success action', () => {
-    expect(fetchPaginatedTasksSuccess(fakeTasks, 1)).toEqual({
+    expect(
+      fetchPaginatedTasksSuccess({
+        total: fakeTasks.length,
+        tasks: fakeTasks,
+        pageSize: 10,
+        page: 1,
+        name: 'Task',
+      })
+    ).toEqual({
       type: TASKS_TYPES.FETCH_TASKS_PAGE_SUCCESS,
+      totalTasks: fakeTasks.length,
       tasks: fakeTasks,
-      pageSize: 1,
+      pageSize: 10,
+      page: 1,
+      name: 'Task',
     });
   });
 
@@ -202,7 +213,10 @@ describe('Tasks Action', () => {
   });
 
   it('should run the fetch paginated tasks async action correctly', async () => {
-    mockAxios.onGet().reply(200, fakeTasks);
+    mockAxios
+      .onPost()
+      .reply(200, { tasks: fakeTasks, total: fakeTasks.length });
+
     await store.dispatch(fetchPaginatedTasks(1, 10));
     const actions = store.getActions();
 
@@ -214,8 +228,11 @@ describe('Tasks Action', () => {
         },
         {
           type: TASKS_TYPES.FETCH_TASKS_PAGE_SUCCESS,
+          totalTasks: fakeTasks.length,
           tasks: fakeTasks,
           pageSize: 10,
+          page: 1,
+          name: '',
         },
         {
           type: REMOVE_LOADING,
@@ -226,7 +243,7 @@ describe('Tasks Action', () => {
   });
 
   it('should handle errors in the fetch paginated tasks async action', async () => {
-    mockAxios.onGet().reply(500, { message: 'Error Message' });
+    mockAxios.onPost().reply(500, { message: 'Error Message' });
     await store.dispatch(fetchPaginatedTasks(1, 10));
     const actions = store.getActions();
 
@@ -261,7 +278,7 @@ describe('Tasks Action', () => {
   });
 
   it('should run the fetch tasks async action correctly', async () => {
-    mockAxios.onGet().reply(200, { tasks: fakeTasks });
+    mockAxios.onPost().reply(200, { tasks: fakeTasks });
     await store.dispatch(fetchTasks({ category: 'MONITORING' }));
     const actions = store.getActions();
 
@@ -284,7 +301,7 @@ describe('Tasks Action', () => {
   });
 
   it('should handle errors in the fetch tasks async action', async () => {
-    mockAxios.onGet().reply(500, { message: 'Error Message' });
+    mockAxios.onPost().reply(500, { message: 'Error Message' });
     await store.dispatch(fetchTasks({ category: 'MONITORING' }));
     const actions = store.getActions();
 

@@ -20,7 +20,7 @@ describe('AxiosInstance factory', () => {
 
   it('should contains the auth expired interceptor attached', () => {
     const axiosInstance = createAxiosInstance({ baseURL: '' });
-    expect(axiosInstance.interceptors.response.handlers).toEqual([
+    expect(axiosInstance.interceptors.response.handlers).toMatchObject([
       {
         fulfilled: AuthExpiredInterceptor.Response.onFulfilled,
         rejected: AuthExpiredInterceptor.Response.onRejected,

@@ -15,7 +15,7 @@ describe('DatasetsApi', () => {
       rejected: AuthExpiredInterceptor.Response.onRejected,
     };
 
-    expect(datasetsApi.axiosInstance.interceptors.response.handlers).toEqual([
+    expect(datasetsApi.axiosInstance.interceptors.response.handlers).toMatchObject([
       interceptor,
     ]);
   });

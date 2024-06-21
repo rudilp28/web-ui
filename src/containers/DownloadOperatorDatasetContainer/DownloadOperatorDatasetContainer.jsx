@@ -69,7 +69,7 @@ const DownloadOperatorDatasetContainer = () => {
         type={'default'}
       >
         {isDownloadingDataset ? <LoadingOutlined /> : <DownloadOutlined />}
-        Fazer download desta aba
+        Fazer download do dataset
       </Button>
     </>
   );

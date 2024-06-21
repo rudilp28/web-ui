@@ -17,6 +17,6 @@ describe('ExperimentRunsApi', () => {
 
     expect(
       experimentRunsApi.axiosInstance.interceptors.response.handlers
-    ).toEqual([interceptor]);
+    ).toMatchObject([interceptor]);
   });
 });

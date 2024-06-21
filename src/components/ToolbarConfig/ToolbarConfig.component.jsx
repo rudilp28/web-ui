@@ -21,29 +21,22 @@ const ToolbarConfig = ({ handleDeleteClick, operator, deployment }) => {
     <>
       <Button icon={<ZoomInOutlined />} type='text' onClick={zoomIn} />
       <Button icon={<ZoomOutOutlined />} type='text' onClick={zoomOut} />
+      <Button icon={<ExpandOutlined />} type='text' onClick={handleFitView} />
 
       {!deployment && (
-        <>
+        <Popconfirm
+          title='Você tem certeza que deseja excluir esta tarefa?'
+          onConfirm={handleDeleteClick}
+          okText='Sim'
+          cancelText='Não'
+          disabled={!operator?.uuid}
+        >
           <Button
-            icon={<ExpandOutlined />}
+            icon={<DeleteOutlined />}
             type='text'
-            onClick={handleFitView}
-          />
-
-          <Popconfirm
-            title='Você tem certeza que deseja excluir esta tarefa?'
-            onConfirm={handleDeleteClick}
-            okText='Sim'
-            cancelText='Não'
             disabled={!operator?.uuid}
-          >
-            <Button
-              icon={<DeleteOutlined />}
-              type='text'
-              disabled={!operator?.uuid}
-            />
-          </Popconfirm>
-        </>
+          />
+        </Popconfirm>
       )}
     </>
   );

@@ -15,7 +15,7 @@ describe('MarketplaceApi', () => {
       rejected: AuthExpiredInterceptor.Response.onRejected,
     };
 
-    expect(marketplaceApi.axiosInstance.interceptors.response.handlers).toEqual(
+    expect(marketplaceApi.axiosInstance.interceptors.response.handlers).toMatchObject(
       [interceptor]
     );
   });

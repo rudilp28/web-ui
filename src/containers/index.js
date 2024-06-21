@@ -10,7 +10,6 @@ export { default as DeploymentToolbarContainer } from './DeploymentToolbarContai
 export { default as DeploymentsHeaderContainer } from './DeploymentsHeaderContainer';
 export { default as DeploymentsTableContainer } from './DeploymentsTableContainer';
 export { default as DeploymentsTabsContainer } from './DeploymentsTabsContainer';
-export { default as DeploymentTestResultModalContainer } from './DeploymentTestResultModalContainer';
 export { default as DownloadOperatorDatasetContainer } from './DownloadOperatorDatasetContainer';
 export { default as EditTitleContainer } from './EditTitleContainer';
 export { default as ExperimentsHeaderContainer } from './ExperimentsHeaderContainer';
@@ -19,17 +18,18 @@ export { default as HeaderProjectDetailsContainer } from './HeaderProjectDetails
 export { default as JupyterLabContainer } from './JupyterLabContainer';
 export { default as LogsDrawerContainer } from './LogsDrawerContainer';
 export { default as ExperimentLogsPanelContainer } from './ExperimentLogsPanelContainer';
+export { default as ExperimentResultsDrawerContainer } from './ExperimentResultsDrawerContainer';
 export { default as MonitoringDrawerContainer } from './MonitoringDrawerContainer';
 export { default as MonitoringPanelContainer } from './MonitoringPanelContainer';
 export { default as NewDeploymentModalContainer } from './NewDeploymentModalContainer';
 export { default as NewMonitoringModalContainer } from './NewMonitoringModalContainer';
 export { default as OperatorResizableSectionContainer } from './OperatorResizableSectionContainer';
-export { default as OperatorResultsModalContainer } from './OperatorResultsModalContainer';
 export { default as PrepareDeploymentsModalContainer } from './PrepareDeploymentsModalContainer';
 export { default as ProjectDetailsContainer } from './ProjectDetailsContainer';
 export { default as PropertiesResizableContainer } from './PropertiesResizableContainer';
 export { default as SaveTemplateContainer } from './SaveTemplateContainer';
 export { default as TasksMenuDetailsContainer } from './TasksMenuDetailsContainer';
+export { default as TestDeploymentContainer } from './TestDeploymentContainer';
 export { default as UsingDeploymentsButtonContainer } from './UsingDeploymentsButtonContainer';
 export { default as UsingDeploymentsModalContainer } from './UsingDeploymentsModalContainer';
 export { default as DeploymentDatasetUploadContainer } from './DeploymentDatasetUploadContainer';

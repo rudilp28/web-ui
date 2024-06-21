@@ -574,26 +574,29 @@ export const updateExperimentOperatorRequest =
       parameterName
     );
 
-    const parameters = {};
+    const newParameters = {};
+
     parametersWithValue.forEach(({ name, value }) => {
-      parameters[name] = name === parameterName ? parameterValue : value;
+      newParameters[name] = value;
     });
+
+    newParameters[parameterName] = parameterValue;
 
     // update experimentOperator
     operatorsApi
       .updateOperator(projectId, experimentId, experimentOperator.uuid, {
-        parameters,
+        parameters: newParameters,
       })
       .then((response) => {
         // getting experimentOperator data
         const successExperimentOperator = { ...experimentOperator };
 
         // changing param value
-        successExperimentOperator.parameters = utils.successOperatorMap(
-          successExperimentOperator.parameters,
-          parameterValue,
-          parameterName
-        );
+        successExperimentOperator.parameters = Object.entries(
+          newParameters
+        ).map(([name, value]) => {
+          return { name, value };
+        });
 
         // checking if experimentOperator is setted up
         successExperimentOperator.settedUp = utils.checkOperatorSettedUp(
@@ -640,28 +643,31 @@ export const updateDeploymentOperatorRequest =
       parameterName
     );
 
-    const parameters = {};
+    const newParameters = {};
+
     parametersWithValue.forEach(({ name, value }) => {
-      parameters[name] = name === parameterName ? parameterValue : value;
+      newParameters[name] = value;
     });
+
+    newParameters[parameterName] = parameterValue;
 
     // update deploymentOperator
     DeploymentsOperatorsApi.updateOperator(
       projectId,
       deploymentId,
       deploymentOperator.uuid,
-      { parameters }
+      { parameters: newParameters }
     )
       .then((response) => {
         // getting deploymentOperator data
         const successDeploymentOperator = { ...deploymentOperator };
 
         // changing param value
-        successDeploymentOperator.parameters = utils.successOperatorMap(
-          successDeploymentOperator.parameters,
-          parameterValue,
-          parameterName
-        );
+        successDeploymentOperator.parameters = Object.entries(
+          newParameters
+        ).map(([name, value]) => {
+          return { name, value };
+        });
 
         // checking if deploymentOperator is setted up
         successDeploymentOperator.settedUp = utils.checkOperatorSettedUp(

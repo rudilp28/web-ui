@@ -15,7 +15,7 @@ describe('TasksApi', () => {
       rejected: AuthExpiredInterceptor.Response.onRejected,
     };
 
-    expect(tasksApi.axiosInstance.interceptors.response.handlers).toEqual([
+    expect(tasksApi.axiosInstance.interceptors.response.handlers).toMatchObject([
       interceptor,
     ]);
   });

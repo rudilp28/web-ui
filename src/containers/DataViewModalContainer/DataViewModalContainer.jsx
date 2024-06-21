@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useMemo } from 'react';
-import { Pagination, Tabs, Button } from 'antd';
+import { Pagination, Tabs, Button, Modal } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -11,7 +11,6 @@ import {
   updateAllDatasetColumnStart,
 } from 'store/dataset/actions';
 import { useIsLoading } from 'hooks';
-import { Modal } from 'uiComponents';
 import { OPERATORS_TYPES } from 'store/operators';
 import { UploadButton } from 'components/Buttons';
 import { hideDataViewModal } from 'store/ui/actions';
@@ -161,12 +160,12 @@ const DataViewModalContainer = () => {
 
   return (
     <Modal
-      className='data-view-modal-container'
-      handleClose={handleClose}
+      className='data-view-modal-container modalFullScreen'
+      onCancel={handleClose}
       title='Visualizar dados'
-      isVisible={isVisible}
+      visible={isVisible}
       footer={null}
-      isFullScreen
+      centered
     >
       <div className='data-view-modal'>
         <div className='data-view-modal-data-header'>

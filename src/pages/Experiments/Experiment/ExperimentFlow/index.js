@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import lodash from 'lodash';
 import PropTypes from 'prop-types';
 import { DropTarget } from 'react-dnd';
 import ReactFlow, { Background } from 'react-flow-renderer';
 
 import TaskBox from 'components/TaskBox';
-import { OperatorsEmptyPlaceholder } from 'components/EmptyPlaceholders';
 import { LogsButton } from 'components/Buttons';
+import { OperatorsEmptyPlaceholder } from 'components/EmptyPlaceholders';
 
 import Vectors, { nodeTypes, edgeTypes } from './CustomNodes';
 
@@ -14,6 +14,7 @@ import './style.less';
 
 const ExperimentFlow = ({
   tasks,
+  operators,
   isOver,
   canDrop,
   flowLoading,
@@ -30,16 +31,20 @@ const ExperimentFlow = ({
   handleRemoveOperator,
 }) => {
   const [connectClass, setConnectClass] = useState('');
+  const [flowInstance, setFlowInstance] = useState(null);
+
+  const handleFitReactFlowView = (reactFlowInstance) => {
+    reactFlowInstance.fitView({ includeHiddenNodes: true });
+    reactFlowInstance.zoomTo(1);
+  };
 
   const handleLoad = (reactFlowInstance) => {
-    setTimeout(() => {
-      reactFlowInstance.fitView();
-      reactFlowInstance.zoomTo(1);
-    }, 0);
+    setFlowInstance(reactFlowInstance);
+    handleFitReactFlowView(reactFlowInstance);
   };
 
   const handleConnect = (params) => {
-    const targetTask = tasks.find(({ uuid }) => uuid === params.target);
+    const targetTask = operators.find(({ uuid }) => uuid === params.target);
     const targetDependencies = targetTask.dependencies;
     handleSaveDependencies(params.target, [
       ...targetDependencies,
@@ -48,7 +53,7 @@ const ExperimentFlow = ({
   };
 
   const handleDeleteConnection = (target, source) => {
-    const targetTask = tasks.find((el) => el.uuid === target);
+    const targetTask = operators.find((el) => el.uuid === target);
     const targetDependencies = targetTask.dependencies;
     const filteredDependencies = targetDependencies.filter(
       (dep) => dep !== source
@@ -80,13 +85,13 @@ const ExperimentFlow = ({
     return '#ffffff';
   }, [canDrop, isActive]);
 
-  const cardsElements = tasks.map((component) => {
-    const arrows = component.dependencies.map((arrow) => {
-      const arrowId = `${component.uuid}/${arrow}`;
+  const cardsElements = operators.map((operator) => {
+    const arrows = operator.dependencies.map((arrow) => {
+      const arrowId = `${operator.uuid}/${arrow}`;
       return {
         id: arrowId,
         type: 'customEdge',
-        target: component.uuid,
+        target: operator.uuid,
         source: arrow,
         animated: arrowId === arrowConfigs.uuid ? arrowConfigs.loading : false,
         data: {
@@ -95,23 +100,28 @@ const ExperimentFlow = ({
       };
     });
 
+    const operatorOriginalTask = tasks?.find(
+      ({ uuid }) => uuid === operator.taskId
+    );
+
     const card = {
-      id: component.uuid,
+      id: operator.uuid,
       sourcePosition: 'right',
       targetPosition: 'left',
       type: 'cardNode',
       data: {
         label: (
           <div
-            id={component.uuid}
+            id={operator.uuid}
             style={{ width: 200 }}
             className='task-elements'
           >
             <TaskBox
+              operator={operator}
+              operatorOriginalTask={operatorOriginalTask}
               handleClick={handleTaskBoxClick}
-              operator={component}
               onConnectingClass={connectClass}
-              dependenciesGraph={tasks
+              dependenciesGraph={operators
                 .map((el) => ({
                   id: el.uuid,
                   dep: el.dependencies,
@@ -120,14 +130,14 @@ const ExperimentFlow = ({
                   (obj, item) => Object.assign(obj, { [item.id]: item.dep }),
                   {}
                 )}
-              {...component}
+              {...operator}
             />
           </div>
         ),
       },
       position: {
-        x: component.positionX,
-        y: component.positionY,
+        x: operator.positionX,
+        y: operator.positionY,
       },
     };
 
@@ -135,8 +145,14 @@ const ExperimentFlow = ({
   });
 
   const cursorStyle = operatorLoading ? { cursor: 'wait' } : {};
+  const emptyOperators = operators.length === 0;
 
-  const emptyOperators = tasks.length === 0;
+  // Without this useEffect, operators located on a negative X or Y will not be shown in the initial render.
+  useEffect(() => {
+    if (operators?.length && flowInstance) {
+      handleFitReactFlowView(flowInstance);
+    }
+  }, [flowInstance, operators?.length]);
 
   return (
     <div
@@ -159,7 +175,7 @@ const ExperimentFlow = ({
         onPaneContextMenu={(e) => e.preventDefault()}
         onConnectStart={() => setConnectClass('Connecting')}
         onElementsRemove={handleDeleteOperator}
-        onlyRenderVisibleElements
+        onlyRenderVisibleElements={false}
       >
         <Background
           gap={25}
@@ -193,6 +209,7 @@ const ExperimentFlow = ({
 
 ExperimentFlow.propTypes = {
   tasks: PropTypes.array.isRequired,
+  operators: PropTypes.array.isRequired,
   flowLoading: PropTypes.bool.isRequired,
   operatorLoading: PropTypes.bool.isRequired,
   canDrop: PropTypes.bool.isRequired,

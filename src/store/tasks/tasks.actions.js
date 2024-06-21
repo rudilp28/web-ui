@@ -111,15 +111,28 @@ export const deleteTask = (id, successCallback) => async (dispatch) => {
 /**
  * Fetch paginated tasks success action creator
  *
- * @param {Array} tasks Tasks array
- * @param {number} pageSize Page size
+ * @param {object} data Tasks Object
+ * @param {Array} data.tasks Tasks Array
+ * @param {number} data.total Total Tasks
+ * @param {number} data.pageSize Page size
+ * @param {number} data.page Page number
+ * @param {string} data.name Task name
  * @returns {object} Action
  */
-export const fetchPaginatedTasksSuccess = (tasks, pageSize) => {
+export const fetchPaginatedTasksSuccess = ({
+  total,
+  tasks,
+  pageSize,
+  page,
+  name,
+}) => {
   return {
     type: TASKS_TYPES.FETCH_TASKS_PAGE_SUCCESS,
+    totalTasks: total,
     tasks,
     pageSize,
+    page,
+    name,
   };
 };
 
@@ -139,20 +152,39 @@ export const fetchPaginatedTasksFail = () => {
  *
  * @param {number} page Page number
  * @param {number} pageSize Page size
+ * @param {string} name Task name to search
  * @returns {Function} Dispatch function
  */
-export const fetchPaginatedTasks = (page, pageSize) => async (dispatch) => {
-  try {
-    dispatch(addLoading(TASKS_TYPES.FETCH_TASKS_PAGE_REQUEST));
-    const response = await tasksApi.getPaginatedTasks(page, pageSize);
-    dispatch(fetchPaginatedTasksSuccess(response.data, pageSize));
-  } catch (e) {
-    dispatch(fetchPaginatedTasksFail());
-    dispatch(showError(e.message));
-  } finally {
-    dispatch(removeLoading(TASKS_TYPES.FETCH_TASKS_PAGE_REQUEST));
-  }
-};
+export const fetchPaginatedTasks =
+  (page, pageSize, name = '') =>
+  async (dispatch) => {
+    try {
+      dispatch(addLoading(TASKS_TYPES.FETCH_TASKS_PAGE_REQUEST));
+
+      const { data } = await tasksApi.getPaginatedTasks({
+        name,
+        page,
+        pageSize,
+      });
+
+      const { total, tasks } = data;
+
+      dispatch(
+        fetchPaginatedTasksSuccess({
+          total,
+          tasks,
+          pageSize,
+          page,
+          name,
+        })
+      );
+    } catch (e) {
+      dispatch(fetchPaginatedTasksFail());
+      dispatch(showError(e.message));
+    } finally {
+      dispatch(removeLoading(TASKS_TYPES.FETCH_TASKS_PAGE_REQUEST));
+    }
+  };
 
 /**
  * Fetch tasks success action creator

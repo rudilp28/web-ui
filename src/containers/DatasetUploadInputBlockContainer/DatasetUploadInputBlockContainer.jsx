@@ -39,8 +39,12 @@ const isUploadingSelector = ({ datasetReducer }) => {
   return datasetReducer.isUploading;
 };
 
-const operatorNameSelector = ({ operatorReducer }) => {
-  return operatorReducer.name;
+const datasetNameSelector = ({ datasetReducer }) => {
+  return datasetReducer.name;
+};
+
+const operatorTaskNameSelector = ({ operatorReducer }) => {
+  return operatorReducer?.task?.name || '';
 };
 
 const isDisabledSelector = ({ uiReducer }) => {
@@ -60,14 +64,15 @@ const DatasetUploadInputBlockContainer = () => {
   const { projectId, experimentId } = useParams();
   const dispatch = useDispatch();
 
-  const datasets = useSelector(datasetsSelector);
+  const operatorTaskName = useSelector(operatorTaskNameSelector);
   const datasetFileName = useSelector(datasetFileNameSelector);
-  const datasetStatus = useSelector(datasetStatusSelector);
   const uploadProgress = useSelector(uploadProgressSelector);
+  const datasetStatus = useSelector(datasetStatusSelector);
   const isUploading = useSelector(isUploadingSelector);
-  const operatorName = useSelector(operatorNameSelector);
+  const datasetName = useSelector(datasetNameSelector);
   const isDisabled = useSelector(isDisabledSelector);
   const operators = useSelector(operatorsSelector);
+  const datasets = useSelector(datasetsSelector);
 
   const datasetsLoading = useIsLoading(DATASETS_TYPES.FETCH_DATASETS_REQUEST);
 
@@ -90,18 +95,25 @@ const DatasetUploadInputBlockContainer = () => {
             percent: uploadProgress,
           },
         ]
-      : datasetFileName && [
+      : datasetName && [
           {
-            uid: datasetFileName,
-            name: datasetFileName,
+            uid: datasetName,
+            name: datasetName,
             status: 'done',
           },
         ];
-  }, [datasetFileName, datasetStatus, isUploading, uploadProgress]);
+  }, [
+    datasetFileName,
+    datasetName,
+    datasetStatus,
+    isUploading,
+    uploadProgress,
+  ]);
 
   const isGoogleDrive = useMemo(() => {
-    return operatorName === 'Google Drive';
-  }, [operatorName]);
+    const expectedTaskName = 'Google Drive'.toLowerCase();
+    return operatorTaskName.toLowerCase().includes(expectedTaskName);
+  }, [operatorTaskName]);
 
   const experimentIsSucceeded = useMemo(() => {
     return utils.checkExperimentSuccess({ operators });

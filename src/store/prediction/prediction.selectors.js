@@ -1,19 +1,13 @@
-export const getDeploymentId = ({ predictionReducer }) => {
-  return predictionReducer.deploymentId;
-};
+export const getRunningPrediction =
+  (projectId, deploymentId) =>
+  ({ predictionReducer }) => {
+    const predictionKey = `${projectId}/${deploymentId}`;
+    return predictionReducer.running[predictionKey];
+  };
 
-export const getPredictionId = ({ predictionReducer }) => {
-  return predictionReducer.predictionId;
-};
-
-export const getDataset = ({ predictionReducer }) => {
-  return predictionReducer.dataset;
-};
-
-export const getPredictionResult = ({ predictionReducer }) => {
-  return predictionReducer.predictionResult;
-};
-
-export const getStatus = ({ predictionReducer }) => {
-  return predictionReducer.status;
-};
+export const getPredictionResult =
+  (projectId, deploymentId) =>
+  ({ predictionReducer }) => {
+    const predictionKey = `${projectId}/${deploymentId}`;
+    return predictionReducer.results[predictionKey];
+  };

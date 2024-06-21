@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import lodash from 'lodash';
 import PropTypes from 'prop-types';
 import ReactFlow, { Background, Handle } from 'react-flow-renderer';
@@ -15,6 +15,7 @@ import DeploymentFlowBox from './DeploymentFlowBox';
 import './DeploymentFlow.style.less';
 
 const DeploymentFlow = ({
+  tasks,
   loading,
   operators,
   numberOfLogs,
@@ -25,11 +26,16 @@ const DeploymentFlow = ({
   handleToggleLogsPanel,
   handleDeselectOperator,
 }) => {
+  const [flowInstance, setFlowInstance] = useState(null);
+
+  const handleFitReactFlowView = (reactFlowInstance) => {
+    reactFlowInstance.fitView({ includeHiddenNodes: true });
+    reactFlowInstance.zoomTo(1);
+  };
+
   const handleLoad = (reactFlowInstance) => {
-    setTimeout(() => {
-      reactFlowInstance.fitView();
-      reactFlowInstance.zoomTo(1);
-    }, 0);
+    setFlowInstance(reactFlowInstance);
+    handleFitReactFlowView(reactFlowInstance);
   };
 
   const handleDragStop = (_, task) => {
@@ -57,6 +63,10 @@ const DeploymentFlow = ({
         };
       });
 
+      const operatorOriginalTask = tasks?.find(
+        ({ uuid }) => uuid === operator.taskId
+      );
+
       const card = {
         id: operator.uuid,
         sourcePosition: 'right',
@@ -75,6 +85,7 @@ const DeploymentFlow = ({
                 status={operator.status}
                 icon={operator.icon}
                 settedUp={operator.settedUp}
+                operatorOriginalTask={operatorOriginalTask}
                 selected={selectedOperatorId === operator.uuid}
                 onEdit={handleSelectOperator}
                 onSelect={handleSelectOperator}
@@ -114,17 +125,17 @@ const DeploymentFlow = ({
     handleSelectOperator,
     operators,
     selectedOperatorId,
+    tasks,
   ]);
 
-  return loading ? (
-    <div className='deployment-flow'>
-      <OperatorsEmptyPlaceholder
-        className='deployment-flow-empty-operators'
-        placeholderWhenLoading='Aguarde...'
-        loading
-      />
-    </div>
-  ) : (
+  // Without this useEffect, operators located on a negative X or Y will not be shown in the initial render.
+  useEffect(() => {
+    if (operators?.length && flowInstance) {
+      handleFitReactFlowView(flowInstance);
+    }
+  }, [flowInstance, operators]);
+
+  return (
     <div className='deployment-flow'>
       <ReactFlow
         deleteKeyCode={46}
@@ -137,6 +148,7 @@ const DeploymentFlow = ({
         onPaneClick={handleDeselectOperator}
         onSelectionChange={handleDeselectOperator}
         onPaneContextMenu={(e) => e.preventDefault()}
+        onlyRenderVisibleElements={false}
       >
         <Background
           variant='dots'
@@ -149,6 +161,8 @@ const DeploymentFlow = ({
         {!operators?.length && (
           <OperatorsEmptyPlaceholder
             className='deployment-flow-empty-operators'
+            loading={loading}
+            placeholderWhenLoading='Aguarde...'
             placeholder='Crie um fluxo de pré-implantação para visualizar aqui'
           />
         )}
@@ -167,6 +181,7 @@ const DeploymentFlow = ({
 };
 
 DeploymentFlow.propTypes = {
+  tasks: PropTypes.array,
   loading: PropTypes.bool,
   operators: PropTypes.array,
   numberOfLogs: PropTypes.number,

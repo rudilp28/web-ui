@@ -5,12 +5,14 @@ import { CopyOutlined, DownloadOutlined } from '@ant-design/icons';
 
 import utils from 'utils';
 import { CommonTable } from 'components';
+import { PREDICTION_STATUS } from 'configs';
 
 import DeploymentTestResultModalData from './DeploymentTestResultModalData';
 import InferenceTestResultModalError from './DeploymentTestResultModalError';
 
 const DeploymentTestResultModalContent = ({
   testResult,
+  testStatus,
   handleShowLogs,
   handleTryAgain,
 }) => {
@@ -64,7 +66,7 @@ const DeploymentTestResultModalContent = ({
     }));
   }, [testResult]);
 
-  if (!testResult) {
+  if (!testResult && ['', PREDICTION_STATUS.FAILED].includes(testStatus)) {
     return (
       <InferenceTestResultModalError
         handleShowLogs={handleShowLogs}
@@ -127,8 +129,14 @@ const DeploymentTestResultModalContent = ({
 
 DeploymentTestResultModalContent.propTypes = {
   testResult: PropTypes.any,
+  testStatus: PropTypes.string,
   handleShowLogs: PropTypes.func.isRequired,
   handleTryAgain: PropTypes.func.isRequired,
+};
+
+DeploymentTestResultModalContent.defaultProps = {
+  testResult: null,
+  testStatus: '',
 };
 
 export default DeploymentTestResultModalContent;
